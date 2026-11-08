@@ -14,6 +14,7 @@ public class TrackingStateMachine extends ShootingStateMachine {
     }
 
     public void setTrackingEnabled(boolean enabled) { trackingEnabled = enabled; }
+    public boolean isTrackingEnabled() { return trackingEnabled; }
     public void adjustAimTrim(double radians) {
         aimTrimRadians += radians;
     }

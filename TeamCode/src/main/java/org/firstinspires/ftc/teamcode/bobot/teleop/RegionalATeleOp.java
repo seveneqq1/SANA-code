@@ -26,6 +26,8 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.bobot.controller.HeadingController;
 import org.firstinspires.ftc.teamcode.bobot.controller.SnapStateMachine;
 import org.firstinspires.ftc.teamcode.bobot.controller.intakeController;
@@ -37,6 +39,8 @@ import java.util.List;
 @Config
 @TeleOp(name = "Regional A - Snap", group = "Regional A")
 public class RegionalATeleOp extends OpMode {
+    // Reset pose in field inches/radians; set these to the robot's known reset location.
+    public static double START_X = 0, START_Y = 0, START_HEADING = 0;
     public static double SLOW_POWER = 0.35;
     public static double TURRET_DIRECTION = 1;
     // Starting values for tuning, not measured calibration.
@@ -55,6 +59,7 @@ public class RegionalATeleOp extends OpMode {
     private HeadingController heading;
     private final ElapsedTime loopTimer = new ElapsedTime();
     private double appliedHeadingKP, appliedHeadingKD;
+    private int poseResetCount;
 
     @Override
     public void init() {
@@ -91,6 +96,7 @@ public class RegionalATeleOp extends OpMode {
 
         telemetry.addLine("Pinpoint heading hold + turret snap; fixed shooter TPS.");
         telemetry.addLine("G1: RT intake, LT eject, hold Y shoot, A stop, LB slow");
+        telemetry.addLine("G1: D-pad right resets Pinpoint to START_X/Y/HEADING");
         telemetry.addLine("G1: X/B heading left/right 90 degrees; right stick cancels hold");
         telemetry.addLine("G2: D-pad up locks heading, LB/RB turret CCW/CW, X centers turret");
         telemetry.update();
@@ -111,6 +117,7 @@ public class RegionalATeleOp extends OpMode {
         operator.readButtons();
         double dtSeconds = loopTimer.seconds();
         loopTimer.reset();
+        resetPoseIfRequested();
         pinpoint.update(GoBildaPinpointDriver.ReadData.ONLY_UPDATE_HEADING);
         double currentHeading = pinpoint.getHeading(AngleUnit.RADIANS);
 
@@ -168,14 +175,23 @@ public class RegionalATeleOp extends OpMode {
         }
 
         telemetry.addData("Shooting state", machine.getState());
+        telemetry.addData("Pose resets", poseResetCount);
         telemetry.addData("Heading hold", heading.isHoldingHeading());
         telemetry.addData("Heading degrees", Math.toDegrees(currentHeading));
         telemetry.addData("Heading target degrees", heading.isHoldingHeading()
                 ? Math.toDegrees(heading.getTargetHeading()) : "Manual");
-        telemetry.addData("Target TPS", shooter.getTargetVelocity());
-        telemetry.addData("Measured TPS", shooter.getCurrentVelocity());
+        shooter.debug(telemetry);
         telemetry.addData("Turret command degrees", Math.toDegrees(machine.getTurretAngleRadians()));
         telemetry.update();
+    }
+
+    private void resetPoseIfRequested() {
+        if (!gamepad1.a && driver.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)) {
+            pinpoint.setPosition(new Pose2D(DistanceUnit.INCH, START_X, START_Y,
+                    AngleUnit.RADIANS, START_HEADING));
+            heading.disableHold();
+            poseResetCount++;
+        }
     }
 
     @Override
@@ -188,6 +204,9 @@ public class RegionalATeleOp extends OpMode {
         }
         if (machine != null) {
             machine.cancelAll();
+        }
+        if (shooter != null) {
+            shooter.forceStopFlywheels();
         }
     }
 }

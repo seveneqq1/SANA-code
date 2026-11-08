@@ -12,6 +12,8 @@ import com.seattlesolvers.solverslib.hardware.motors.Motor;
 
 @Config
 public class intakeController {
+    // Multiplies only FEEDING transfer power; collection and eject keep their presets.
+    public static double TRANSFER_SHOOTING_SPEED_SCALE = 0.967;
     Motor intake, transfer;
     public ElapsedTime timer;
     private State state = State.ZERO;
@@ -46,7 +48,8 @@ public class intakeController {
         this.state = state;
 
         intake.set(-state.intakePower);
-        transfer.set(state.transferPower);
+        double scale = state == State.FEEDING ? TRANSFER_SHOOTING_SPEED_SCALE : 1.0;
+        transfer.set(state.transferPower * scale);
     }
 
     public void stop() {

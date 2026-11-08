@@ -78,6 +78,10 @@ public class blue extends OpMode {
         for(LynxModule hub : allHubs){
             hub.clearBulkCache();
         }
+        ShooterController.setTargetVelocity(shooterController.baseVelocity);
+        ShooterController.update();
+        ShooterController.debug(telemetry);
+        telemetry.update();
         first_driver.readButtons();
         second_driver.readButtons();
         double rx = first_driver.getRightX();
@@ -87,5 +91,11 @@ public class blue extends OpMode {
         if (follower != null) {
             follower.update();
         }
+    }
+    @Override
+    public void stop() {
+        if (mecanumDrive != null) mecanumDrive.stop();
+        if (IntakeController != null) IntakeController.stop();
+        if (ShooterController != null) ShooterController.forceStopFlywheels();
     }
 }

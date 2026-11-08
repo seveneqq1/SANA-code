@@ -46,3 +46,28 @@ Feeding requires a positive target and `shooter.isAtTarget()`. There is no pose
 validation, aiming gate, turret settling timer, speed stability timer, or quarter
 hysteresis. The driver decides when the turret is aligned. Call `cancelAll()` on
 OpMode stop. Only the helper calls shooter/turret update.
+
+
+## Regional A - Tracking (2026-11-08)
+
+`RegionalATrackingTeleOp` refreshes the full Pinpoint pose once per loop before
+passing inches and radians into the tracking coordinator. It retains heading hold,
+driver mechanism priorities, fixed shooter TPS, right-side drive inversion, and
+stop cleanup. G2 X resumes tracking, Y centers and pauses tracking, and LB/RB
+apply +5/-5 degree aim trim once per press (both together do nothing).
+
+Tracking still selects the existing quarter targets (60/84 inches on each axis).
+Pinpoint must already be calibrated and positioned in that field coordinate frame;
+this OpMode does not invent pod offsets. G1 D-pad Right sets the pose to the
+configured START_X/Y/HEADING (inches/radians), and cancels heading hold. Verify those targets
+match the intended goal before shooting. Module-to-module CAD spacing is not a
+signed pod offset from the robot center.
+
+Transfer power is reduced only in FEEDING: 0.8 times the Dashboard setting
+`intakeController.TRANSFER_SHOOTING_SPEED_SCALE` (default 0.5) gives 0.4.
+FULL_POWER stays 1.0 and BALLS_OUT stays -0.8. Spin-up without shooter readiness
+stops transfer; stop/cancel sets it to zero.
+
+Fresh Java compilation and a disposable JVM harness with simulated hardware passed
+for transfer transitions, readiness, position/heading aiming, center/resume, trim,
+and cancel. These checks do not establish physical odometry or aiming calibration.

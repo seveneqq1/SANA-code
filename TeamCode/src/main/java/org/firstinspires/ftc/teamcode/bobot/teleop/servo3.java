@@ -3,40 +3,43 @@ package org.firstinspires.ftc.teamcode.bobot.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.bobot.controller.shooterController_var2;
+import org.firstinspires.ftc.teamcode.bobot.controller.intakeController;
 
 @TeleOp(name = "shoot seq 0.7 +intake+trans")
 public class servo3 extends LinearOpMode {
-    DcMotor shooter1;
-    DcMotor shooter2;
+    shooterController_var2 shooter;
     DcMotor intake, transfer;
-    Servo stopper;
     boolean intake_on = false;
     public void runOpMode(){
-        shooter1 = hardwareMap.get(DcMotor.class, "shooter1");
-        shooter2 = hardwareMap.get(DcMotor.class, "shooter2");
+        shooter = new shooterController_var2(hardwareMap);
         intake = hardwareMap.get(DcMotor.class, "intake");
         transfer = hardwareMap.get(DcMotor.class, "trans");
-        stopper = hardwareMap.get(Servo.class, "stopper");
-        waitForStart();
-        while(opModeIsActive()){
-            if(gamepad1.a){
-                intake_on = !intake_on;
+        try {
+            waitForStart();
+            while(opModeIsActive()){
+                shooter.setTargetVelocity(shooterController_var2.baseVelocity);
+                shooter.update();
+                boolean feeding = gamepad1.x && shooter.isAtTarget();
+                if(gamepad1.a){
+                    intake_on = !intake_on;
+                }
+                if(intake_on){
+                    intake.setPower(1);
+                    transfer.setPower(feeding ? -0.8 * intakeController.TRANSFER_SHOOTING_SPEED_SCALE : -1);
+                } else {
+                    intake.setPower(0);
+                    transfer.setPower(0);
+                }
+                if (feeding) shooter.feedStopper();
+                else shooter.closeStopper();
+                shooter.debug(telemetry);
+                telemetry.update();
             }
-            if(intake_on){
-                intake.setPower(1);
-                transfer.setPower(-1);
-            } else {
-                intake.setPower(0);
-                transfer.setPower(0);
-            }
-            if(gamepad1.x){
-                stopper.setPosition(0.5);
-            } else{
-                stopper.setPosition(0.05);
-            }
-            shooter1.setPower(0.5);
-            shooter2.setPower(-0.5);
+        } finally {
+            shooter.forceStopFlywheels();
+            intake.setPower(0);
+            transfer.setPower(0);
         }
     }
 }

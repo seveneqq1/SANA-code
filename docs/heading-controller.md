@@ -39,7 +39,7 @@ change does not create derivative kick. Consecutive samples must be less than
 π apart for wrapped velocity to identify the rotation direction unambiguously.
 
 `RegionalATeleOp` now reads heading from `GoBildaPinpointDriver` with hardware
-name `pinpoint`, without resetting its position or IMU. It reads heading once
+name `pinpoint`. G1 D-pad Right resets its pose explicitly, as described below. It reads heading once
 per loop and uses the measured loop duration for the controller. No Pedro
 follower or X/Y localization is required for this heading-only mode.
 
@@ -117,3 +117,18 @@ PY
 These check angle wrapping, output signs/limits, snaps, tolerance, derivative
 behavior, reset, invalid inputs and an idealized rotation model. They do not
 validate real drivetrain dynamics, sensor measurements or gain tuning.
+
+## Pinpoint position reset (2026-11-08)
+
+Both Regional A - Snap and Regional A - Tracking use a new G1 D-pad Right press
+to write `START_X`, `START_Y`, `START_HEADING` directly to Pinpoint. Defaults are
+0 inches, 0 inches, 0 radians; configure these Dashboard values for the robot's
+known physical reset location. Heading is CCW from +X. This sets field pose,
+without recalibrating the IMU or changing measured pod offsets.
+
+The handler cancels heading hold and runs before the current sensor update and
+any aiming. Holding the button does not repeatedly reset. G1 A suppresses reset.
+Telemetry increments `Pose resets` when the handler runs. The old Pedro follower
+is not used. The direct SDK API and units were checked against installed SDK
+12.0.0 sources and both TeleOps compile; physical reset behavior needs a robot
+check. The Snap mode continues to read only heading for its normal operation.

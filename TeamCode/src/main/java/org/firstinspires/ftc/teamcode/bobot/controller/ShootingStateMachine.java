@@ -144,8 +144,7 @@ public abstract class ShootingStateMachine {
         telemetry.addData("Shooting state", state);
         telemetry.addData("Target inches", "%.1f, %.1f", targetX, targetY);
         telemetry.addData("Distance inches", distance);
-        telemetry.addData("Target TPS", shooter.getTargetVelocity());
-        telemetry.addData("Measured TPS", shooter.getCurrentVelocity());
+        shooter.debug(telemetry);
         telemetry.addData("Turret command radians", commandedAngle);
     }
 }
