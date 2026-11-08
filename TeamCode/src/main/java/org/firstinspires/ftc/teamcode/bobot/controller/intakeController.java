@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.bobot.controller;
 
+/**
+ * Intake and transfer motors that feed balls into the shooter.
+ * Config names: "intake" and "trans".
+ */
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;

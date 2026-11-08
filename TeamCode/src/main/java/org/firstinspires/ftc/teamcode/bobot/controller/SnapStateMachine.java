@@ -1,9 +1,13 @@
 package org.firstinspires.ftc.teamcode.bobot.controller;
 
+/**
+ * Driver snaps the turret by 90 degrees. No automatic aim.
+ */
+
 public  class SnapStateMachine extends ShootingStateMachine {
     private boolean previousClockwise, previousCounterclockwise;
 
-    public SnapStateMachine(shooterController_var2 shooter, intakeController intake,
+    public SnapStateMachine(shooterController shooter, intakeController intake,
             turretController turret, ShotTable table) {
         super(shooter, intake, turret, table);
     }

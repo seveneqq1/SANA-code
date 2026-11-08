@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.bobot.controller;
 
+/**
+ * Turret aimed by two standard servos (servo1 and servo2) that move together.
+ * 180 degrees is center. Convert degrees to servo position with kV.
+ */
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -26,7 +31,7 @@ public class turretController {
         setTargetPos(center_target_pos);
     }
 
-    double servo_pos;
+    double servo_pos = center_pos; // start centered so the first update() does not slam to 0
     double angle;
 
     public void setTargetPos(double targetPos){

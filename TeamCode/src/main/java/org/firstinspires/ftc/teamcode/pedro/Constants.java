@@ -1,5 +1,14 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+/**
+ * Pedro Pathing 3 settings for this season's robot.
+ *
+ * create() is not finished: it still returns null so TeleOp that only needs
+ * Pinpoint heading (RegionalATeleOp) can run. Fill it in after you finish
+ * the Pinpoint tuner (signed offsets from the center of rotation) and the
+ * mecanum drive names in a Follower builder.
+ */
+
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -26,6 +35,8 @@ public class Constants {
             ODO_MODULE_CENTER_DISTANCE_MM / 25.4;
 
     public static Follower create(HardwareMap h) {
+        // TODO: build a Pedro 3 Follower here after Pinpoint offsets and drive
+        // constants are measured. Callers must null-check until this is done.
         // return new Follower(Drivetrain, Localizer, Foresight);
         return null;
     }

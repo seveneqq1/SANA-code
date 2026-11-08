@@ -40,8 +40,10 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 
+    // SolversLib core (Motor, MecanumDrive, GamepadEx) plus the Pedro 3 adapter.
+    // Keep this adapter; it is not a second Pedro implementation. Official pairing:
+    // org.solverslib:pedroPathing:0.3.6 with com.pedropathing:core:3.0.1
     // https://docs.seattlesolvers.com/installation
-    // 0.3.6's Pedro adapter targets Pedro Pathing 3.
     implementation 'org.solverslib:core:0.3.6'
     implementation 'org.solverslib:pedroPathing:0.3.6'
 

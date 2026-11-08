@@ -17,11 +17,13 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:12.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
+    // One Pedro Pathing source: official 3.x (core + REV Hub localizers + tuners).
     implementation 'com.pedropathing:core:3.0.1'
     implementation 'com.pedropathing:revhub:3.0.1'
     implementation 'com.pedropathing:tuning:1.0.1'
 
-    // Sloth-compatible Dashboard; preserves the com.acmerobotics.dashboard API.
+    // Dashboard via Slothboard (com.acmerobotics.dashboard / @Config).
+    // Do not also add com.bylazar panels/fullpanels — that was the Worlds conflict.
     // https://github.com/Dairy-Foundation/Sloth#ftc-dashboard
     implementation 'com.acmerobotics.slothboard:dashboard:0.3.2+0.6.0'
 }

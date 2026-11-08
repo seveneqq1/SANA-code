@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode.bobot.controller;
 
+/**
+ * Shared shoot / intake / feed sequence. Subclasses decide how the turret aims.
+ */
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public abstract class ShootingStateMachine {
     public enum State { IDLE, INTAKING, REVERSING, SPINNING_UP, READY, FEEDING }
-    protected final shooterController_var2 shooter;
+    protected final shooterController shooter;
     protected final intakeController intake;
     protected final turretController turret;
     private final ShotTable table;
@@ -18,7 +22,7 @@ public abstract class ShootingStateMachine {
     public double turretForwardRadians = 0;
     public double turretDirection = 1;
 
-    protected ShootingStateMachine(shooterController_var2 shooter,
+    protected ShootingStateMachine(shooterController shooter,
                                    intakeController intake, turretController turret, ShotTable table) {
         this.shooter = shooter;
         this.intake = intake;
@@ -115,10 +119,10 @@ public abstract class ShootingStateMachine {
         updateAim(x, y, heading);
         distance = Math.hypot(targetX - x, targetY - y);
         double tps = Double.isNaN(manualTPS)
-                ? (table == null ? shooterController_var2.baseVelocity : table.getTPS(distance))
+                ? (table == null ? shooterController.baseVelocity : table.getTPS(distance))
                 : manualTPS;
 
-        shooter.setTargetVelocity(spinning ? tps + speedTrim : shooterController_var2.baseVelocity);
+        shooter.setTargetVelocity(spinning ? tps + speedTrim : shooterController.baseVelocity);
         shooter.update();
         turret.update();
 

@@ -1,5 +1,10 @@
 package org.firstinspires.ftc.teamcode.bobot.teleop;
 
+/**
+ * Early Blue TeleOp sketch. Prefer RegionalATeleOp for matches.
+ * Drive is robot-centric on gamepad1; shooter/intake are constructed but not sequenced.
+ */
+
 import org.firstinspires.ftc.teamcode.bobot.controller.intakeController;
 import org.firstinspires.ftc.teamcode.bobot.controller.shooterController;
 import org.firstinspires.ftc.teamcode.bobot.controller.turretController;
@@ -24,7 +29,7 @@ public class blue extends OpMode {
     shooterController ShooterController;
     private MecanumDrive mecanumDrive;
     Follower follower;
-    Pose startPose = new Pose(0, 0, Math.toRadians(Math.PI));
+    Pose startPose = new Pose(0, 0, Math.PI); // heading in radians
     turretController TurretController;
 
     Motor frontLeft, frontRight, backLeft, backRight;
@@ -78,5 +83,9 @@ public class blue extends OpMode {
         double rx = first_driver.getRightX();
         double x = first_driver.getLeftX();
         double y = first_driver.getLeftY();
+        mecanumDrive.driveRobotCentric(x, y, rx);
+        if (follower != null) {
+            follower.update();
+        }
     }
 }

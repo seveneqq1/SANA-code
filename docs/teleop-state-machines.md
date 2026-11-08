@@ -7,7 +7,7 @@ SnapStateMachine machine = new SnapStateMachine(shooter, intake, turret, null);
 // Or: TrackingStateMachine machine = new TrackingStateMachine(shooter, intake, turret, null);
 ```
 
-A null LUT uses `shooterController_var2.baseVelocity`. To use measured shot data,
+A null LUT uses `shooterController.baseVelocity`. To use measured shot data,
 pass `new ShotTable(distancesInches, speedsTPS)` with at least two matching arrays,
 strictly increasing distances, and positive TPS. Interpolation is linear and
 out-of-range distances use the closest endpoint speed.
