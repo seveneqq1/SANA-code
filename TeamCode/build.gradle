@@ -1,17 +1,31 @@
- 
- 
- 
- 
- 
- 
- 
- 
- 
+// Official setup: https://github.com/Dairy-Foundation/Sloth#load-plugin
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+        maven { url 'https://repo.dairy.foundation/releases' }
+    }
+    dependencies {
+        classpath 'dev.frozenmilk:Load:0.3.2'
+    }
+}
 
+apply plugin: 'com.android.application'
+apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
- 
+//
+// build.gradle in TeamCode
+//
+// Most of the definitions for building your module reside in a common, shared
+// file 'build.common.gradle'. Being factored in this way makes it easier to
+// integrate updates to the FTC into your code. If you really need to customize
+// the build definitions, you can place those customizations in this file, but
+// please think carefully as to whether such customizations are really necessary
+// before doing so.
 
- 
+// Custom definitions may go here
+
+// Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
@@ -22,22 +36,14 @@ android {
         jniLibs.useLegacyPackaging true
     }
 }
-repositories {
-    maven {
-        url "https://repo.dairy.foundation/releases"
-    }
-    maven {
-        url = "https://mymaven.bylazar.com/releases"
-    }
-    maven {
-        url "https://repo.dairy.foundation/releases"
-    }
-    }
+
 dependencies {
     implementation project(':FtcRobotController')
-    implementation "org.solverslib:core:0.3.4"  
-    implementation "org.solverslib:pedroPathing:0.3.4"
-    implementation "org.solverslib:photon:0.3.4"
-    implementation "com.bylazar:panels:1.0.5"
-    implementation "dev.frozenmilk.dairy:CachingHardware:1.0.0"
+
+    // https://docs.seattlesolvers.com/installation
+    // 0.3.6's Pedro adapter targets Pedro Pathing 3.
+    implementation 'org.solverslib:core:0.3.6'
+    implementation 'org.solverslib:pedroPathing:0.3.6'
+
+    implementation 'dev.frozenmilk.sinister:Sloth:0.3.2'
 }
