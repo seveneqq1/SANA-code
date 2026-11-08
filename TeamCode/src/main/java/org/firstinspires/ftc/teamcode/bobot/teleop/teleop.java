@@ -65,7 +65,7 @@ public class teleop extends OpMode {
         }
         mecanumDrive = new MecanumDrive(false, frontLeft, frontRight, backLeft, backRight);
 
-        shooterController shooter = new shooterController(hardwareMap);
+        shooterController_var2 shooter = new shooterController_var2(hardwareMap);
         intakeController intake = new intakeController(hardwareMap);
         turretController turret = new turretController(hardwareMap);
 
@@ -75,8 +75,8 @@ public class teleop extends OpMode {
 
         telemetry.addData("Turret mode", "90-degree snap");
         telemetry.addData("Flywheels", "Constantly running at 0.8 power");
-        telemetry.addData("Stopper Closed Pos", shooterController.blockedPosition);
-        telemetry.addData("Stopper Feed Pos", shooterController.feedingPosition);
+        telemetry.addData("Stopper Closed Pos", shooterController_var2.blockedPosition);
+        telemetry.addData("Stopper Feed Pos", shooterController_var2.feedingPosition);
         telemetry.update();
     }
 

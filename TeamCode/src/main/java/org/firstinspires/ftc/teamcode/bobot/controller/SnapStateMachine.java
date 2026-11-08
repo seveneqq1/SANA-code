@@ -7,7 +7,7 @@ package org.firstinspires.ftc.teamcode.bobot.controller;
 public  class SnapStateMachine extends ShootingStateMachine {
     private boolean previousClockwise, previousCounterclockwise;
 
-    public SnapStateMachine(shooterController shooter, intakeController intake,
+    public SnapStateMachine(shooterController_var2 shooter, intakeController intake,
             turretController turret, ShotTable table) {
         super(shooter, intake, turret, table);
     }

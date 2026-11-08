@@ -29,7 +29,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.bobot.controller.HeadingController;
 import org.firstinspires.ftc.teamcode.bobot.controller.SnapStateMachine;
 import org.firstinspires.ftc.teamcode.bobot.controller.intakeController;
-import org.firstinspires.ftc.teamcode.bobot.controller.shooterController;
+import org.firstinspires.ftc.teamcode.bobot.controller.shooterController_var2;
 import org.firstinspires.ftc.teamcode.bobot.controller.turretController;
 
 import java.util.List;
@@ -49,7 +49,7 @@ public class RegionalATeleOp extends OpMode {
     private GamepadEx driver, operator;
     private List<LynxModule> hubs;
     private MecanumDrive drive;
-    private shooterController shooter;
+    private shooterController_var2 shooter;
     private SnapStateMachine machine;
     private GoBildaPinpointDriver pinpoint;
     private HeadingController heading;
@@ -78,7 +78,7 @@ public class RegionalATeleOp extends OpMode {
         }
         drive = new MecanumDrive(false, frontLeft, frontRight, backLeft, backRight);
 
-        shooter = new shooterController(hardwareMap);
+        shooter = new shooterController_var2(hardwareMap);
         intakeController intake = new intakeController(hardwareMap);
         turretController turret = new turretController(hardwareMap);
         machine = new SnapStateMachine(shooter, intake, turret, null);
@@ -162,7 +162,7 @@ public class RegionalATeleOp extends OpMode {
                 machine.cancelAll();
             }
 
-            machine.setManualTPS(shooterController.baseVelocity);
+            machine.setManualTPS(shooterController_var2.baseVelocity);
             // X/Y are unused for snap aiming and fixed TPS; only heading is measured.
             machine.update(0, 0, currentHeading);
         }

@@ -19,7 +19,8 @@ import com.seattlesolvers.solverslib.controller.PDController;
  * during the match (flywheelPower). Set USE_VELOCITY_CONTROL = true to hold a
  * target speed with PD plus optional kV feedforward instead.
  *
- * This class replaces both the old PD shooterController and shooterController_var2.
+ * Alternate controller with measured speed and optional PD + kV.
+ * Match OpModes use shooterController_var2. Blue TeleOp uses this class.
  */
 @Config
 public class shooterController {

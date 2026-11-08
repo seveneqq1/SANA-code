@@ -8,7 +8,7 @@ public class TrackingStateMachine extends ShootingStateMachine {
     public double aimTrimRadians;
     private boolean trackingEnabled = true;
 
-    public TrackingStateMachine(shooterController shooter, intakeController intake,
+    public TrackingStateMachine(shooterController_var2 shooter, intakeController intake,
             turretController turret, ShotTable table) {
         super(shooter, intake, turret, table);
     }

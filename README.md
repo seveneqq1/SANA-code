@@ -55,7 +55,8 @@ Hood и датчиков мяча в этом коде нет.
 **Главный матчевый код**
 
 - `bobot/teleop/RegionalATeleOp.java` — матчевый TeleOp `Regional A - Snap`.
-- `bobot/controller/shooterController.java` — **один** контроллер shooter: два мотора навстречу, stopper, по умолчанию постоянная мощность `flywheelPower` (всегда крутится). Можно включить `USE_VELOCITY_CONTROL` в Dashboard.
+- `bobot/controller/shooterController_var2.java` — shooter для матчевых OpMode: постоянная мощность `flywheelPower`, `shooter2` всегда в обратную сторону, `isAtTarget()` сразу `true`.
+- `bobot/controller/shooterController.java` — запасной контроллер с замером скорости и опциональным PD + kV (`USE_VELOCITY_CONTROL`). Его использует ранний `blue` TeleOp.
 - `bobot/controller/intakeController.java` — `intake` + `trans`.
 - `bobot/controller/turretController.java` — turret на `servo1` и `servo2`, центр 180°.
 - `bobot/controller/HeadingController.java` — удержание heading (сам датчики не читает).
@@ -102,8 +103,8 @@ Hood и датчиков мяча в этом коде нет.
 
 1. **Pinpoint offsets.** В `Constants` записаны unsigned расстояния между модулями из Fusion (14.2 mm и 335.8 mm). Это **не** те signed offsets, которые нужны Pedro (`+X` вперёд, `+Y` влево, от центра вращения). Прогони `PinpointTuner` и подставь результат в `create()`.
 2. **`create()` всё ещё `null`.** Автономка и любой код, который вызывает `Constants.create()` без проверки, не поедет по pathing. `RegionalATeleOp` pathing не использует, ему достаточно Pinpoint heading.
-3. **Направление shooter.** По умолчанию `REVERSE_SHOOTER2 = true` (`shooter1` = `+power`, `shooter2` = `-power`). Если оба колеса крутятся в одну сторону — выключи флаг в Dashboard.
-4. **`flywheelPower` (0.67)** и при желании `baseVelocity` (2400). Сейчас режим постоянной мощности; `USE_VELOCITY_CONTROL` выключен, чтобы не ломать то, что уже работает.
+3. **Направление shooter в матче.** `RegionalATeleOp` и `teleop` используют `shooterController_var2`: `shooter2` всегда получает `-power`. Флаг `REVERSE_SHOOTER2` есть только у запасного `shooterController`.
+4. **`flywheelPower` (0.67)** на `shooterController_var2`. `baseVelocity` (2400) использует state machine. У запасного `shooterController` `USE_VELOCITY_CONTROL` выключен.
 5. Позиции `stopper`: закрыто `0.05`, открыто `0.5`.
 6. Направление drive-моторов: в Snap инвертированы `frontright` и `backright`. Если робот едет не туда — поправь инверсии.
 7. Turret `kV`, `center_pos`, лимиты — на новом механизме их надо проверить.
@@ -111,7 +112,7 @@ Hood и датчиков мяча в этом коде нет.
 
 ## Что починили в этой копии
 
-- Один `shooterController` вместо двух (`shooterController` + `shooterController_var2`). API как у var2, плюс замер реальной скорости и опциональный PD + kV.
+- Матчевые OpMode снова на `shooterController_var2`, как до очистки. Запасной `shooterController` (замер скорости и опциональный PD + kV) оставлен; его держит `blue` TeleOp.
 - Удалены сломанные файлы: `beka_.java` (NPE: `Constants.create()` = null и `startPose` не задан) и пустой `test.java`.
 - `red.java` и `autonomous/blue.java` теперь настоящие OpMode, а не классы с аннотацией без `extends OpMode`.
 - В `blue` TeleOp джойстик наконец идёт на drive; исправлен heading `Math.toRadians(Math.PI)` (это было ~3°, а не 180°).
