@@ -9,10 +9,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /** Shooter2 encoder drives shared flywheel PID. All speeds are ticks/second. */
 @Config
-public class shooterController_var2 {
+public class  shooterController_var2 {
     public final DcMotorEx shooter1, shooter2;
     public final Servo stopper;
-    public static double baseVelocity = 1720;
+    public static double baseVelocity = 1500; // was 1720, halved
     public static double velocityTolerance = 120;
     public static double blockedPosition = 0.05;
     public static double feedingPosition = 0.5;
@@ -24,7 +24,12 @@ public class shooterController_var2 {
     public static double kD = 0;
     // Starting estimate from previous 0.67 power / 2400 TPS, not measured calibration.
     public static double kV = 0.67 / 2400;
-    public static boolean REVERSE_SHOOTER2 = true;
+
+    // Motor directions. Both false = both motors get the same sign (spin the same way).
+    // If both wheels spin the wrong way for shooting, set BOTH to true.
+    // If only one wheel is wrong, flip only that one.
+    public static boolean REVERSE_SHOOTER1 = true;
+    public static boolean REVERSE_SHOOTER2 = false ; // both true = both wheels flipped to push the ball outward
 
     private final ShooterVelocityPID pid = new ShooterVelocityPID();
     private double targetVelocity = baseVelocity;
@@ -73,10 +78,11 @@ public class shooterController_var2 {
         double dt = previousUpdate == 0 ? 0 : (now - previousUpdate) * 1e-9;
         previousUpdate = now;
         // Shooter1 has no encoder (user confirmed); never average its zero reading.
+        // Speed is measured as abs(), so the encoder sign does not affect the PID.
         currentVelocity = Math.abs(shooter2.getVelocity());
         if (!flywheelsActive) return;
         power = pid.calculate(targetVelocity, currentVelocity, dt, kP, kI, kD, kV);
-        shooter1.setPower(power);
+        shooter1.setPower(REVERSE_SHOOTER1 ? -power : power);
         shooter2.setPower(REVERSE_SHOOTER2 ? -power : power);
     }
 
@@ -93,6 +99,7 @@ public class shooterController_var2 {
         telemetry.addData("Measured TPS (shooter2)", currentVelocity);
         telemetry.addData("Shared shooter power", power);
         telemetry.addData("Shooter1 encoder", "Not installed; follows shooter2 PID");
+        telemetry.addData("Reverse shooter1/2", REVERSE_SHOOTER1 + " / " + REVERSE_SHOOTER2);
         telemetry.addData("Shooter kP", kP);
         telemetry.addData("Shooter kI", kI);
         telemetry.addData("Shooter ready", isAtTarget());

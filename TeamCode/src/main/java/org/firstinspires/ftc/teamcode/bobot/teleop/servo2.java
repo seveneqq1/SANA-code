@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @TeleOp(name = "turret set 0.5 both")
-public class servo2 extends LinearOpMode {
+public class  servo2 extends LinearOpMode {
     Servo servo;
     Servo servo1;
     public void runOpMode(){

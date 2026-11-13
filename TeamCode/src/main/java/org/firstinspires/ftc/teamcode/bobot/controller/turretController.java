@@ -20,11 +20,20 @@ public class turretController {
     public static double min_target_pos = -60;
     public static double max_target_pos = 420;
 
+    // The servos are mounted mirrored, so one of them must be reversed to move the same way.
+    // If they still fight each other, flip BOTH values (true/false <-> false/true).
+    // Editable live in Dashboard.
+    public static boolean REVERSE_SERVO1 = false;
+    public static boolean REVERSE_SERVO2 = true;
+
     public boolean forced = true;
+
+    private boolean appliedReverse1, appliedReverse2;
 
     public turretController(HardwareMap hardwareMap){
         servo1 = hardwareMap.get(Servo.class, "servo1");
         servo2 = hardwareMap.get(Servo.class, "servo2");
+        applyDirections();
     }
 
     public void start(){
@@ -42,7 +51,18 @@ public class turretController {
         servo_pos = pos;
     }
     public void update(){
+        if (REVERSE_SERVO1 != appliedReverse1 || REVERSE_SERVO2 != appliedReverse2) {
+            applyDirections();
+        }
+        // Both get the same position; the direction flag mirrors one of them.
         servo1.setPosition(servo_pos);
         servo2.setPosition(servo_pos);
+    }
+
+    private void applyDirections() {
+        servo1.setDirection(REVERSE_SERVO1 ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        servo2.setDirection(REVERSE_SERVO2 ? Servo.Direction.REVERSE : Servo.Direction.FORWARD);
+        appliedReverse1 = REVERSE_SERVO1;
+        appliedReverse2 = REVERSE_SERVO2;
     }
 }
