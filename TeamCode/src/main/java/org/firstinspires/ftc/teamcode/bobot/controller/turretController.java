@@ -13,18 +13,18 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class turretController {
     private final Servo servo1;
     private final Servo servo2;
-    public static double center_pos = 0.5;
+    public static double center_pos = 0.062; // servo position where the turret looks straight forward (measured Nov 14)
     public static double center_target_pos = 180;
-    public static double kV = 1.0 / 422.0;
+    public static double kV = 1.0 / 422.0; // 330 deg servo * 80/20 * 44/137 = ~424 deg; measured ~0.217 per 90 deg
 
     public static double min_target_pos = -60;
-    public static double max_target_pos = 420;
+    public static double max_target_pos = 600;
 
     // The servos are mounted mirrored, so one of them must be reversed to move the same way.
-    // If they still fight each other, flip BOTH values (true/false <-> false/true).
+    // If they fight each other, flip ONLY ONE value (flipping both keeps them fighting).
     // Editable live in Dashboard.
     public static boolean REVERSE_SERVO1 = false;
-    public static boolean REVERSE_SERVO2 = true;
+    public static boolean REVERSE_SERVO2 = false;
 
     public boolean forced = true;
 

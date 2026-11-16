@@ -21,7 +21,7 @@ public class intakeController {
         ZERO(0, 0),
         STOP(0, 0),
         FULL_POWER(1, 1),
-        FEEDING(0.5, 0.8),
+        FEEDING(0.5, 0.8), // old feeding speed
         BALLS_OUT(-0.8, -0.8);
 
         final double intakePower;

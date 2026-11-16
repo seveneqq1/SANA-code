@@ -22,15 +22,13 @@ public class FixedPointTrackingMachine extends TrackingStateMachine {
 
     /** Reachable turret angle limits in radians (servo 0..1 and min/max_target_pos). */
     public double lowLimit() {
-        double half = 0.5 / turretController.kV;
-        return Math.toRadians(Math.max(turretController.min_target_pos,
-                turretController.center_target_pos - half) + 0.5);
+        double atServo0 = turretController.center_target_pos - turretController.center_pos / turretController.kV;
+        return Math.toRadians(Math.max(turretController.min_target_pos, atServo0) + 0.5);
     }
 
     public double highLimit() {
-        double half = 0.5 / turretController.kV;
-        return Math.toRadians(Math.min(turretController.max_target_pos,
-                turretController.center_target_pos + half) - 0.5);
+        double atServo1 = turretController.center_target_pos + (1 - turretController.center_pos) / turretController.kV;
+        return Math.toRadians(Math.min(turretController.max_target_pos, atServo1) - 0.5);
     }
 
     /**
@@ -38,13 +36,19 @@ public class FixedPointTrackingMachine extends TrackingStateMachine {
      * that line, keeping the same distance from the robot, then go back to AUTO.
      */
     public void lockTargetHere(double x, double y, double heading) {
-        double dist = Math.hypot(targetX - x, targetY - y);
-        if (dist < 1) dist = 1;
         double relative = (commandedAngle - Math.toRadians(turretController.center_target_pos))
                 / turretDirection;
         double world = heading + turretForwardRadians + relative;
-        targetX = x + dist * Math.cos(world);
-        targetY = y + dist * Math.sin(world);
+        double sin = Math.sin(world);
+        double along = Math.abs(sin) > 0.2 ? (targetY - y) / sin : -1;
+        if (along > 0) {
+            // The goal is on the wall at targetY: slide the target along that wall only.
+            targetX = x + along * Math.cos(world);
+        } else {
+            double dist = Math.max(1, Math.hypot(targetX - x, targetY - y));
+            targetX = x + dist * Math.cos(world);
+            targetY = y + dist * Math.sin(world);
+        }
         aimTrimRadians = 0;
         setTrackingEnabled(true);
     }

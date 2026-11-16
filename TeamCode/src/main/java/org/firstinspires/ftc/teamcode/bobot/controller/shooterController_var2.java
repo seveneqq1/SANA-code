@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 /** Shooter2 encoder drives shared flywheel PID. All speeds are ticks/second. */
@@ -12,15 +13,29 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class  shooterController_var2 {
     public final DcMotorEx shooter1, shooter2;
     public final Servo stopper;
-    public static double baseVelocity = 1500; // was 1720, halved
+    private final VoltageSensor voltageSensor;
+    private double voltage = 12.0;
+    public static double baseVelocity = 2400; // max ~2800 TPS (6000 RPM motor)
     public static double velocityTolerance = 120;
-    public static double blockedPosition = 0.05;
+    // FULL_POWER = true: shooter always at max power (no PID). Feeding allowed above READY_TPS.
+    public static boolean FULL_POWER = false; // false = PID holds baseVelocity (has headroom to recover after each ball)
+    // Voltage compensation: power * (NOMINAL_VOLTAGE / battery), same shot on full or tired battery.
+    public static boolean VOLTAGE_COMP = true;
+    public static double NOMINAL_VOLTAGE = 12.0;
+    // Smooths noisy encoder speed. 1 = no filter, 0.2 = very smooth (slower reaction).
+    public static double VELOCITY_FILTER = 0.3;
+    public static double READY_TPS = 2300;
+    // Power when not shooting (saves battery). 0 = off.
+    public static double IDLE_POWER = 0.3;
+    /** Set true while the driver wants to shoot: full power. False: IDLE_POWER. */
+    public boolean boost = true;
+    public static double blockedPosition = 0.35;
     public static double feedingPosition = 0.5;
 
     // Power per TPS error. Conservative starting gain; verify on hardware.
-    public static double kP = 0.0003;
+    public static double kP = 0.0008;
     // Power per (TPS * second); removes persistent speed error from feedforward mismatch.
-    public static double kI = 0.0002;
+    public static double kI = 0.0001;
     public static double kD = 0;
     // Starting estimate from previous 0.67 power / 2400 TPS, not measured calibration.
     public static double kV = 0.67 / 2400;
@@ -28,12 +43,12 @@ public class  shooterController_var2 {
     // Motor directions. Both false = both motors get the same sign (spin the same way).
     // If both wheels spin the wrong way for shooting, set BOTH to true.
     // If only one wheel is wrong, flip only that one.
-    public static boolean REVERSE_SHOOTER1 = true;
-    public static boolean REVERSE_SHOOTER2 = false ; // both true = both wheels flipped to push the ball outward
+    public static boolean REVERSE_SHOOTER1 = false;
+    public static boolean REVERSE_SHOOTER2 = true; // both true = both wheels flipped to push the ball outward
 
     private final ShooterVelocityPID pid = new ShooterVelocityPID();
     private double targetVelocity = baseVelocity;
-    private double currentVelocity, power;
+    private double currentVelocity, rawVelocity, filteredVolts = 12.0, power;
     private long previousUpdate;
     private boolean flywheelsActive = true;
 
@@ -41,6 +56,7 @@ public class  shooterController_var2 {
         shooter1 = hardwareMap.get(DcMotorEx.class, "shooter1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter2");
         stopper = hardwareMap.get(Servo.class, "stopper");
+        voltageSensor = hardwareMap.voltageSensor.iterator().next();
         shooter1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         shooter1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -79,14 +95,26 @@ public class  shooterController_var2 {
         previousUpdate = now;
         // Shooter1 has no encoder (user confirmed); never average its zero reading.
         // Speed is measured as abs(), so the encoder sign does not affect the PID.
-        currentVelocity = Math.abs(shooter2.getVelocity());
+        rawVelocity = Math.abs(shooter2.getVelocity());
+        currentVelocity += VELOCITY_FILTER * (rawVelocity - currentVelocity);
         if (!flywheelsActive) return;
-        power = pid.calculate(targetVelocity, currentVelocity, dt, kP, kI, kD, kV);
+        filteredVolts += 0.05 * (voltageSensor.getVoltage() - filteredVolts); // voltage dips when balls hit, smooth it
+        voltage = filteredVolts;
+        if (FULL_POWER) {
+            power = boost ? 1.0 : IDLE_POWER;
+        } else if (boost) {
+            power = pid.calculate(targetVelocity, currentVelocity, dt, kP, kI, kD, kV);
+            if (VOLTAGE_COMP && voltage > 6) power *= NOMINAL_VOLTAGE / voltage;
+        } else {
+            power = IDLE_POWER;
+        }
+        power = Math.max(0, Math.min(1, power));
         shooter1.setPower(REVERSE_SHOOTER1 ? -power : power);
         shooter2.setPower(REVERSE_SHOOTER2 ? -power : power);
     }
 
     private boolean withinTolerance(double tolerance) {
+        if (FULL_POWER) return flywheelsActive && currentVelocity > READY_TPS;
         return flywheelsActive && targetVelocity > 0
                 && Math.abs(currentVelocity - targetVelocity) < tolerance;
     }
@@ -97,9 +125,11 @@ public class  shooterController_var2 {
     public void debug(Telemetry telemetry) {
         telemetry.addData("Target TPS", targetVelocity);
         telemetry.addData("Measured TPS (shooter2)", currentVelocity);
+        telemetry.addData("Raw TPS (no filter)", rawVelocity);
         telemetry.addData("Shared shooter power", power);
         telemetry.addData("Shooter1 encoder", "Not installed; follows shooter2 PID");
         telemetry.addData("Reverse shooter1/2", REVERSE_SHOOTER1 + " / " + REVERSE_SHOOTER2);
+        telemetry.addData("Battery voltage", "%.2f V (comp %s)", voltage, VOLTAGE_COMP);
         telemetry.addData("Shooter kP", kP);
         telemetry.addData("Shooter kI", kI);
         telemetry.addData("Shooter ready", isAtTarget());
