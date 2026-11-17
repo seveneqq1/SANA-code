@@ -3,7 +3,7 @@
 ## Project Structure & Module Organization
 
 This FTC Android project has two Gradle modules:
-- `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/`: team code. `bobot/` contains autonomous routines, TeleOp OpModes, and hardware controllers; `pedro/` contains pathing configuration and tuning procedures.
+- `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/`: team code. `bobot/` contains competition OpModes, diagnostics, controllers, states, and command lifecycle; `pedroPathing/` contains path commands and constants.
 - `FtcRobotController/`: SDK controller application, sample OpModes, and Android resources. Prefer implementing team behavior in `TeamCode`.
 
 Android resources live under each module's `src/main/res/`. Read `docs/sloth-setup.md` for deployment and `docs/teleop-state-machines.md` for controller integration. `doc/` holds upstream media/legal assets; `libs/` holds bundled artifacts.
@@ -25,7 +25,7 @@ Use Java 8-compatible syntax, four-space indentation, and the existing package l
 
 ## Testing Guidelines
 
-No unit-test framework or coverage threshold is configured. Existing `test.java` and Pedro `procedures/Tests.java` are robot-side code, not a host test suite. For new automated tests, use `src/test/java/` and `*Test.java`, adding the required dependencies. Validate robot behavior on hardware and report what was actually checked. Follow documented pose units, turret limits, and `cancelAll()` stop handling.
+Use JUnit 4 for host-side tests in `src/test/java/` and run them with `rtk proxy ./gradlew :TeamCode:testDebugUnitTest`. Robot hardware and calibration tests use diagnostic OpModes. Validate robot behavior on hardware and report what was actually checked. Follow documented pose units, turret limits, and `cancelAll()` stop handling.
 
 ## Commit & Pull Request Guidelines
 

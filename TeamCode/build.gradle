@@ -37,15 +37,22 @@ android {
     }
 }
 
+repositories {
+    maven { url = 'https://mymaven.bylazar.com/releases' }
+}
+
 dependencies {
     implementation project(':FtcRobotController')
 
-    // SolversLib core (Motor, MecanumDrive, GamepadEx) plus the Pedro 3 adapter.
-    // Keep this adapter; it is not a second Pedro implementation. Official pairing:
-    // org.solverslib:pedroPathing:0.3.6 with com.pedropathing:core:3.0.1
-    // https://docs.seattlesolvers.com/installation
-    implementation 'org.solverslib:core:0.3.6'
-    implementation 'org.solverslib:pedroPathing:0.3.6'
+    // NextFTC runs the Ivy scheduler used by Pedro Pathing 3 commands.
+    implementation 'dev.nextftc.v2:robot:0.3.0'
+    implementation 'com.pedropathing.ivy:pedro:1.1.1'
 
+    // Keep SolversLib hardware, drive and gamepad helpers on their existing version.
+    implementation 'org.solverslib:core:0.3.6'
+
+    implementation 'com.bylazar:fullpanels:1.0.20'
     implementation 'dev.frozenmilk.sinister:Sloth:0.3.2'
+
+    testImplementation 'junit:junit:4.13.2'
 }

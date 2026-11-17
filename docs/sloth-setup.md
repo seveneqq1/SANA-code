@@ -1,14 +1,17 @@
 # Sloth with Pedro Pathing 3
 
-This project uses Pedro Pathing core/revhub 3.0.1, SolversLib core and Pedro
-adapter 0.3.6, and Sloth/Load 0.3.2. SolversLib's published 0.3.6 adapter
-targets Pedro 3. Dashboard uses Slothboard 0.3.2+0.6.0 so its configuration
-and OpMode scanning support hot reload.
+This project uses Pedro Pathing core/revhub 3.0.1, Ivy 1.1.1, NextFTC 0.3.0,
+SolversLib core 0.3.6, Panels 1.0.20, and Sloth/Load 0.3.2. NextFTC runs Ivy
+commands, including Pedro Pathing commands. SolversLib supplies hardware,
+drive, and gamepad utilities. The official Panels bundle provides telemetry
+and live configuration, including Sloth-aware configurable scanning.
 
 Official references:
 
 - [SolversLib installation](https://docs.seattlesolvers.com/installation)
-- [SolversLib Pedro adapter metadata](https://repo.dairy.foundation/releases/org/solverslib/pedroPathing/0.3.6/pedroPathing-0.3.6.pom)
+- [NextFTC installation](https://beta.nextftc.dev/introduction/installation/)
+- [Pedro Pathing Ivy installation](https://pedropathing.com/docs/ivy)
+- [Panels prerequisites](https://panels.bylazar.com/docs/com.bylazar.docs/Prerequisites/)
 - [Sloth installation and Android Studio task setup](https://github.com/Dairy-Foundation/Sloth#installation)
 - [Pedro Pathing installation](https://pedropathing.com/docs/pathing/installation)
 

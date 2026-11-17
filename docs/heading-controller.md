@@ -1,6 +1,6 @@
 # Heading controller
 
-`bobot/controller/HeadingController.java` calculates chassis turn power from a
+`bobot/controllers/HeadingController.java` calculates chassis turn power from a
 measured heading. It does not read sensors, reset Pinpoint, or command motors.
 All headings are radians: zero along +X and positive counterclockwise.
 
@@ -104,7 +104,7 @@ repository root; compiled files go into a temporary directory:
 rtk proxy python3 - <<'PY'
 import subprocess
 import tempfile
-package = "org/firstinspires/ftc/teamcode/bobot/controller/"
+package = "org/firstinspires/ftc/teamcode/bobot/controllers/"
 with tempfile.TemporaryDirectory() as output:
     subprocess.run(["rtk", "proxy", "javac", "-d", output,
                     "TeamCode/src/main/java/" + package + "HeadingController.java",
