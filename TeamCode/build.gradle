@@ -1,4 +1,3 @@
-// Official setup: https://github.com/Dairy-Foundation/Sloth#load-plugin
 buildscript {
     repositories {
         mavenCentral()
@@ -13,19 +12,6 @@ buildscript {
 apply plugin: 'com.android.application'
 apply plugin: 'dev.frozenmilk.sinister.sloth.load'
 
-//
-// build.gradle in TeamCode
-//
-// Most of the definitions for building your module reside in a common, shared
-// file 'build.common.gradle'. Being factored in this way makes it easier to
-// integrate updates to the FTC into your code. If you really need to customize
-// the build definitions, you can place those customizations in this file, but
-// please think carefully as to whether such customizations are really necessary
-// before doing so.
-
-// Custom definitions may go here
-
-// Include common definitions from above.
 apply from: '../build.common.gradle'
 apply from: '../build.dependencies.gradle'
 
@@ -40,10 +26,6 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
 
-    // SolversLib core (Motor, MecanumDrive, GamepadEx) plus the Pedro 3 adapter.
-    // Keep this adapter; it is not a second Pedro implementation. Official pairing:
-    // org.solverslib:pedroPathing:0.3.6 with com.pedropathing:core:3.0.1
-    // https://docs.seattlesolvers.com/installation
     implementation 'org.solverslib:core:0.3.6'
     implementation 'org.solverslib:pedroPathing:0.3.6'
 
